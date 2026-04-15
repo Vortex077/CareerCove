@@ -1,0 +1,322 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  STUDENT
+  ADMIN
+  TNP_COORDINATOR
+  HOD
+}
+
+enum ApplicationStatus {
+  APPLIED
+  UNDER_REVIEW
+  SHORTLISTED
+  INTERVIEW_SCHEDULED
+  SELECTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum JobType {
+  INTERNSHIP
+  FULL_TIME
+  BOTH
+}
+
+enum DriveStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  APPLICATION_RECEIVED
+  STATUS_UPDATE
+  NEW_OPPORTUNITY
+  DEADLINE_REMINDER
+  INTERVIEW_SCHEDULED
+  SYSTEM
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  email              String    @unique
+  passwordHash       String    @map("password_hash")
+  fullName           String    @map("full_name")
+  role               UserRole
+  
+  isVerified         Boolean   @default(false) @map("is_verified")
+  verificationToken  String?   @unique @map("verification_token")
+  resetToken         String?   @unique @map("reset_token")
+  resetTokenExpiry   DateTime? @map("reset_token_expiry")
+  isActive           Boolean   @default(true) @map("is_active")
+  lastLogin          DateTime? @map("last_login")
+  
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  studentProfile     StudentProfile?
+  refreshTokens      RefreshToken[]
+  notifications      Notification[]
+  emailLogs          EmailLog[]
+  createdJobs        Job[]              @relation("CreatedJobs")
+  createdCompanies   Company[]          @relation("CreatedCompanies")
+  createdDrives      PlacementDrive[]   @relation("CreatedDrives")
+
+  @@index([email])
+  @@index([role])
+  @@index([verificationToken])
+  @@index([resetToken])
+  @@map("users")
+}
+
+model StudentProfile {
+  userId             Int       @id @map("user_id")
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  enrollmentNumber   String    @unique @map("enrollment_number")
+  department         String
+  batchYear          Int       @map("batch_year")
+  currentYear        Int       @map("current_year")
+  currentSemester    Int       @map("current_semester")
+  cgpa               Decimal?  @db.Decimal(3,2)
+  percentage         Decimal?  @db.Decimal(5,2)
+  activeBacklogs     Int       @default(0) @map("active_backlogs")
+  
+  phone              String?
+  skills             String[]
+  programmingLanguages String[] @map("programming_languages")
+  
+  resumeUrl          String?   @map("resume_url")
+  linkedinUrl        String?   @map("linkedin_url")
+  githubUrl          String?   @map("github_url")
+  portfolioUrl       String?   @map("portfolio_url")
+  
+  isPlaced           Boolean   @default(false) @map("is_placed")
+  placementCompany   String?   @map("placement_company")
+  placementPackage   Decimal?  @db.Decimal(10,2) @map("placement_package")
+  placementDate      DateTime? @map("placement_date")
+  
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  applications       Application[]
+
+  @@index([enrollmentNumber])
+  @@index([department])
+  @@index([batchYear])
+  @@index([cgpa])
+  @@index([isPlaced])
+  @@map("student_profiles")
+}
+
+model Company {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  description        String?
+  website            String?
+  industry           String?
+  logoUrl            String?   @map("logo_url")
+  
+  hrName             String?   @map("hr_name")
+  hrEmail            String?   @map("hr_email")
+  hrPhone            String?   @map("hr_phone")
+  
+  isActive           Boolean   @default(true) @map("is_active")
+  addedBy            Int       @map("added_by")
+  addedByUser        User      @relation("CreatedCompanies", fields: [addedBy], references: [id])
+  
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  jobs               Job[]
+
+  @@index([name])
+  @@index([industry])
+  @@index([isActive])
+  @@map("companies")
+}
+
+model PlacementDrive {
+  id                 Int          @id @default(autoincrement())
+  title              String
+  description        String?
+  driveType          JobType      @map("drive_type")
+  academicYear       String       @map("academic_year")
+  
+  startDate          DateTime     @map("start_date")
+  endDate            DateTime?    @map("end_date")
+  status             DriveStatus  @default(UPCOMING)
+  
+  isActive           Boolean      @default(true) @map("is_active")
+  createdBy          Int          @map("created_by")
+  createdByUser      User         @relation("CreatedDrives", fields: [createdBy], references: [id])
+  
+  createdAt          DateTime     @default(now()) @map("created_at")
+  updatedAt          DateTime     @updatedAt @map("updated_at")
+
+  jobs               Job[]
+
+  @@index([academicYear])
+  @@index([status])
+  @@index([startDate, endDate])
+  @@map("placement_drives")
+}
+
+model Job {
+  id                    Int       @id @default(autoincrement())
+  
+  companyId             Int       @map("company_id")
+  company               Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  driveId               Int?      @map("drive_id")
+  drive                 PlacementDrive? @relation(fields: [driveId], references: [id], onDelete: SetNull)
+  
+  title                 String
+  jobType               JobType   @map("job_type")
+  
+  minCgpa               Decimal?  @db.Decimal(3,2) @map("min_cgpa")
+  maxBacklogs           Int?      @default(0) @map("max_backlogs")
+  allowedDepartments    String[]  @map("allowed_departments")
+  allowedYears          Int[]     @map("allowed_years")
+  
+  jdPdfUrl              String?   @map("jd_pdf_url")
+  companyJobUrl         String?   @map("company_job_url")
+  externalFormUrl       String?   @map("external_form_url")
+  
+  shortDescription      String?   @map("short_description")
+  packageInfo           String?   @map("package_info")
+  location              String?
+  duration              String?
+  requiredSkills        String[]  @map("required_skills")
+  
+  applicationDeadline   DateTime  @map("application_deadline")
+  applicationMode       String    @default("external") @map("application_mode")
+  
+  status                String    @default("draft")
+  viewCount             Int       @default(0) @map("view_count")
+  applicationCount      Int       @default(0) @map("application_count")
+  
+  postedBy              Int       @map("posted_by")
+  postedByUser          User      @relation("CreatedJobs", fields: [postedBy], references: [id])
+  publishedAt           DateTime? @map("published_at")
+  
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  applications          Application[]
+
+  @@index([companyId])
+  @@index([driveId])
+  @@index([status])
+  @@index([jobType])
+  @@index([applicationDeadline])
+  @@map("jobs")
+}
+
+model Application {
+  studentId          Int               @map("student_id")
+  student            StudentProfile    @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+  
+  jobId              Int               @map("job_id")
+  job                Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  status             ApplicationStatus @default(APPLIED)
+  
+  coverLetter        String?           @map("cover_letter")
+  resumeUrl          String?           @map("resume_url")
+  
+  eligibilityStatus  String            @default("pending") @map("eligibility_status")
+  adminRemarks       String?           @map("admin_remarks")
+  
+  interviewDate      DateTime?         @map("interview_date")
+  
+  appliedAt          DateTime          @default(now()) @map("applied_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+
+  @@id([studentId, jobId])
+  @@index([jobId])
+  @@index([studentId])
+  @@index([status])
+  @@index([eligibilityStatus])
+  @@map("applications")
+}
+
+model RefreshToken {
+  id                 Int       @id @default(autoincrement())
+  userId             Int       @map("user_id")
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  token              String    @unique
+  expiresAt          DateTime  @map("expires_at")
+  isRevoked          Boolean   @default(false) @map("is_revoked")
+  
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+model Notification {
+  id                 Int              @id @default(autoincrement())
+  userId             Int              @map("user_id")
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title              String
+  message            String
+  notificationType   NotificationType @map("notification_type")
+  
+  relatedEntityType  String?          @map("related_entity_type")
+  relatedEntityId    Int?             @map("related_entity_id")
+  
+  isRead             Boolean          @default(false) @map("is_read")
+  readAt             DateTime?        @map("read_at")
+  actionUrl          String?          @map("action_url")
+  
+  createdAt          DateTime         @default(now()) @map("created_at")
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model EmailLog {
+  id                 Int       @id @default(autoincrement())
+  userId             Int?      @map("user_id")
+  user               User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  toEmail            String    @map("to_email")
+  subject            String
+  emailType          String    @map("email_type")
+  
+  status             String    @default("pending")
+  errorMessage       String?   @map("error_message")
+  
+  sentAt             DateTime? @map("sent_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([emailType])
+  @@index([status])
+  @@index([createdAt])
+  @@map("email_logs")
+}
