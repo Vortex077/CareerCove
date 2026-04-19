@@ -20,7 +20,7 @@ const EMPTY_FORM = {
   title: '', companyId: '', driveId: '', jobType: 'FULL_TIME', location: '',
   packageInfo: '', minCgpa: '', maxBacklogs: '0', applicationDeadline: '',
   shortDescription: '', status: 'published',
-  allowedDepartments: [], requiredSkills: '', duration: ''
+  allowedDepartments: [], allowedYears: [], requiredSkills: '', duration: ''
 };
 
 export default function ManageJobs() {
@@ -78,6 +78,7 @@ export default function ManageJobs() {
       shortDescription: job.shortDescription || '',
       status: job.status || 'published',
       allowedDepartments: job.allowedDepartments || [],
+      allowedYears: job.allowedYears || [],
       requiredSkills: (job.requiredSkills || []).join(', '),
       duration: job.duration || '',
     });
@@ -104,6 +105,14 @@ export default function ManageJobs() {
       allowedDepartments: f.allowedDepartments.includes(dept)
         ? f.allowedDepartments.filter(d => d !== dept)
         : [...f.allowedDepartments, dept]
+    }));
+  };
+  const handleYearToggle = (yr) => {
+    setForm(f => ({
+      ...f,
+      allowedYears: f.allowedYears.includes(yr)
+        ? f.allowedYears.filter(y => y !== yr)
+        : [...f.allowedYears, yr]
     }));
   };
 
@@ -162,6 +171,8 @@ export default function ManageJobs() {
       reasons.push(`CGPA ${app.student.cgpa} < required ${job.minCgpa}`);
     if (job.maxBacklogs != null && app.student.activeBacklogs > job.maxBacklogs)
       reasons.push(`${app.student.activeBacklogs} active backlogs > max ${job.maxBacklogs}`);
+    if (job.allowedYears?.length > 0 && !job.allowedYears.includes(app.student.currentYear))
+      reasons.push(`Batch Year ${app.student.currentYear} not eligible`);
     return { eligible: reasons.length === 0, reasons };
   };
 
@@ -256,6 +267,26 @@ export default function ManageJobs() {
                 {drives.map(d => <option key={d.id} value={d.id}>{d.title}</option>)}
               </select>
             </div>
+          </div>
+
+          {/* Eligibility Years */}
+          <div className="form-group" style={{ marginBottom:'1rem' }}>
+            <label className="form-label">Allowed Year (Batch Eligibility)</label>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:'0.5rem', marginTop:'0.35rem' }}>
+              {['1st Year', '2nd Year', '3rd Year', '4th Year'].map(yr => (
+                <button type="button" key={yr} onClick={() => handleYearToggle(yr)}
+                  style={{
+                    padding:'4px 12px', borderRadius:20, fontSize:'0.8rem', fontWeight:500, cursor:'pointer',
+                    border:`1.5px solid ${form.allowedYears.includes(yr) ? '#0F766E' : '#E2E8F0'}`,
+                    background: form.allowedYears.includes(yr) ? '#CCFBF1' : 'white',
+                    color: form.allowedYears.includes(yr) ? '#0F766E' : '#64748B',
+                    transition: 'all 0.15s'
+                  }}>
+                  {yr}
+                </button>
+              ))}
+            </div>
+            <p style={{ margin:'4px 0 0', fontSize:'0.75rem', color:'#94A3B8' }}>Select which academic years are eligible to apply for this job.</p>
           </div>
 
           {/* Departments */}
