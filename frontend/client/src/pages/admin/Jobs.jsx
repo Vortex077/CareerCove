@@ -76,9 +76,10 @@ export default function ManageJobs() {
         ? new Date(job.applicationDeadline).toISOString().slice(0, 16)
         : '',
       shortDescription: job.shortDescription || '',
-      status: job.status || 'published',
       allowedDepartments: job.allowedDepartments || [],
-      allowedYears: job.allowedYears || [],
+      allowedYears: (job.allowedYears || []).map(y => 
+        y === 1 ? '1st Year' : y === 2 ? '2nd Year' : y === 3 ? '3rd Year' : y === 4 ? '4th Year' : `${y}th Year`
+      ),
       requiredSkills: (job.requiredSkills || []).join(', '),
       duration: job.duration || '',
     });

@@ -3,6 +3,8 @@ const prisma = require('../config/prisma');
 class JobService {
 
   static async createJob(data) {
+    const mapYear = (y) => typeof y === 'string' ? parseInt(y.charAt(0), 10) : parseInt(y, 10);
+    
     return prisma.job.create({
       data: {
         title: data.title,
@@ -19,7 +21,7 @@ class JobService {
         driveId: data.driveId ? parseInt(data.driveId, 10) : null,
         postedBy: data.postedBy,
         allowedDepartments: data.allowedDepartments || [],
-        allowedYears: data.allowedYears ? data.allowedYears.map(Number) : [],
+        allowedYears: data.allowedYears ? data.allowedYears.map(mapYear).filter(n => !isNaN(n)) : [],
         requiredSkills: data.requiredSkills || [],
         duration: data.duration || null,
       },
@@ -28,6 +30,8 @@ class JobService {
   }
 
   static async updateJob(id, data) {
+    const mapYear = (y) => typeof y === 'string' ? parseInt(y.charAt(0), 10) : parseInt(y, 10);
+
     return prisma.job.update({
       where: { id: parseInt(id, 10) },
       data: {
@@ -42,6 +46,7 @@ class JobService {
         ...(data.status && { status: data.status }),
         ...(data.driveId !== undefined && { driveId: data.driveId ? parseInt(data.driveId, 10) : null }),
         ...(data.allowedDepartments && { allowedDepartments: data.allowedDepartments }),
+        ...(data.allowedYears && { allowedYears: data.allowedYears.map(mapYear).filter(n => !isNaN(n)) }),
         ...(data.requiredSkills && { requiredSkills: data.requiredSkills }),
         ...(data.duration !== undefined && { duration: data.duration }),
       },
