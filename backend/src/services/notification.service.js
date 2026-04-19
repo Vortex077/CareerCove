@@ -9,7 +9,7 @@ class NotificationService {
       return await prisma.notification.create({
         data: {
           userId,
-          type,
+          notificationType: type,
           title,
           message,
           isRead: false
@@ -25,10 +25,15 @@ class NotificationService {
    * Batch notify eligible students (e.g., when a Job is posted)
    */
   static async notifyNewJob(job) {
-    // Collect specific bounds dynamically
     const where = {};
     if (job.minCgpa) where.cgpa = { gte: parseFloat(job.minCgpa) };
-    if (job.maxActiveBacklogs !== null) where.activeBacklogs = { lte: parseInt(job.maxActiveBacklogs, 10) };
+    if (job.maxBacklogs !== null) where.activeBacklogs = { lte: parseInt(job.maxBacklogs, 10) };
+    if (job.allowedDepartments?.length > 0 && !job.allowedDepartments.includes('ALL')) {
+      where.department = { in: job.allowedDepartments };
+    }
+    if (job.allowedYears?.length > 0) {
+      where.currentYear = { in: job.allowedYears };
+    }
 
     try {
       const eligibleProfiles = await prisma.studentProfile.findMany({
@@ -40,9 +45,9 @@ class NotificationService {
 
       const payload = eligibleProfiles.map(p => ({
         userId: p.userId,
-        type: 'NEW_OPPORTUNITY',
+        notificationType: 'NEW_OPPORTUNITY',
         title: 'New Job Opportunity',
-        message: `${job.title} is now taking applications!`,
+        message: `${job.title} at ${job.company?.name || 'a new company'} is now taking applications!`,
         isRead: false
       }));
 
