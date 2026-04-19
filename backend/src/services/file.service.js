@@ -1,5 +1,5 @@
-const fs = require('fs');
 const supabase = require('../config/supabase');
+const path = require('path');
 
 /**
  * Upload file to Supabase Storage
@@ -10,16 +10,18 @@ const supabase = require('../config/supabase');
  */
 const uploadToSupabase = async (file, bucket = 'resumes', folder = '') => {
   if (!supabase) {
-    console.warn('⚠️ Supabase not configured. Returning local path.');
-    return `/uploads/${file.filename}`;
+    console.warn('⚠️ Supabase not configured. This will fail in production.');
+    throw new Error('Storage service unavailable');
   }
 
-  const filePath = folder ? `${folder}/${file.filename}` : file.filename;
-  const fileBuffer = fs.readFileSync(file.path);
+  // Generate unique filename since memoryStorage doesn't provide one
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+  const filename = `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`;
+  const filePath = folder ? `${folder}/${filename}` : filename;
 
   const { error } = await supabase.storage
     .from(bucket)
-    .upload(filePath, fileBuffer, {
+    .upload(filePath, file.buffer, {
       contentType: file.mimetype,
       upsert: true,
     });
@@ -33,9 +35,6 @@ const uploadToSupabase = async (file, bucket = 'resumes', folder = '') => {
   const { data: urlData } = supabase.storage
     .from(bucket)
     .getPublicUrl(filePath);
-
-  // Clean up local file after successful upload
-  fs.unlinkSync(file.path);
 
   return urlData.publicUrl;
 };
