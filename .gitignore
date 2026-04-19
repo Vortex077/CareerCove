@@ -34,6 +34,10 @@ logs/
 
 # Testing
 coverage/
+tests/
+test-results/
+playwright-report/
+blob-report/
 
 # Misc
 .cache/
