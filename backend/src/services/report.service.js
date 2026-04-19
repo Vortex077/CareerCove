@@ -15,24 +15,20 @@ class ReportService {
         where,
         include: {
           user: { select: { fullName: true, email: true } },
-          student: {
-             include: {
-                applications: {
-                   where: { status: 'SELECTED' },
-                   include: {
-                      job: {
-                         include: { company: true }
-                      }
-                   }
-                }
-             }
+          applications: {
+            where: { status: 'SELECTED' },
+            include: {
+              job: {
+                include: { company: true }
+              }
+            }
           }
         }
       });
 
       // Filter and compute maps
-      const placed = profiles.filter(p => p.student && p.student.applications.length > 0);
-      const unplaced = profiles.filter(p => !p.student || p.student.applications.length === 0);
+      const placed = profiles.filter(p => p.applications && p.applications.length > 0);
+      const unplaced = profiles.filter(p => !p.applications || p.applications.length === 0);
 
       // Dept aggregate map
       const departmentStats = {};
@@ -41,7 +37,7 @@ class ReportService {
           departmentStats[p.department] = { total: 0, placed: 0 };
         }
         departmentStats[p.department].total++;
-        if (p.student && p.student.applications.length > 0) {
+        if (p.applications && p.applications.length > 0) {
           departmentStats[p.department].placed++;
         }
       });
@@ -49,7 +45,7 @@ class ReportService {
       // Flatten placed students safely addressing edge-cases of missing User relationships bounds or duplicates
       const placedStudentsFlat = [];
       placed.forEach(p => {
-        p.student.applications.forEach(app => {
+        p.applications.forEach(app => {
           placedStudentsFlat.push({
              name: p.user?.fullName || 'Unknown User',
              email: p.user?.email || 'N/A',

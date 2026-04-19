@@ -41,13 +41,13 @@ const resetPasswordValidation = [
 ];
 
 const updateProfileValidation = [
-  body('phone').optional().matches(/^[6-9]\d{9}$/).withMessage('Valid 10-digit phone number is required'),
-  body('cgpa').optional().isFloat({ min: 0, max: 10 }).withMessage('CGPA must be between 0 and 10'),
-  body('skills').optional().isArray().withMessage('Skills must be an array'),
-  body('programmingLanguages').optional().isArray().withMessage('Programming languages must be an array'),
-  body('linkedinUrl').optional().isURL().withMessage('Valid LinkedIn URL is required'),
-  body('githubUrl').optional().isURL().withMessage('Valid GitHub URL is required'),
-  body('portfolioUrl').optional().isURL().withMessage('Valid portfolio URL is required'),
+  body('phone').optional({ checkFalsy: true }).matches(/^(\+91[\s-]?)?[6-9]\d{9}$/).withMessage('Valid phone number is required'),
+  body('cgpa').optional({ checkFalsy: true }).isFloat({ min: 0, max: 10 }).withMessage('CGPA must be between 0 and 10'),
+  body('skills').optional({ checkFalsy: true }).isArray().withMessage('Skills must be an array'),
+  body('programmingLanguages').optional({ checkFalsy: true }).isArray().withMessage('Programming languages must be an array'),
+  body('linkedinUrl').optional({ checkFalsy: true }).isURL().withMessage('Valid LinkedIn URL is required'),
+  body('githubUrl').optional({ checkFalsy: true }).isURL().withMessage('Valid GitHub URL is required'),
+  body('portfolioUrl').optional({ checkFalsy: true }).isURL().withMessage('Valid portfolio URL is required'),
 ];
 
 const createJobValidation = [

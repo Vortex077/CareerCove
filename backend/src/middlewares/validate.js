@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { errorResponse } = require('../utils/helpers');
+
 
 /**
  * Handle express-validator validation results
@@ -11,7 +11,12 @@ const validate = (req, res, next) => {
       field: err.path,
       message: err.msg,
     }));
-    return errorResponse(res, 'Validation failed', 400, formattedErrors);
+    console.error('Validation failed:', formattedErrors);
+    return res.status(400).json({
+      success: false,
+      error: 'Validation failed',
+      details: formattedErrors
+    });
   }
   next();
 };

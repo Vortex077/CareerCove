@@ -20,7 +20,7 @@ class CompanyService {
    * Get all companies with basic search and pagination
    */
   static async getAllCompanies({ skip, limit, search }) {
-    const where = {};
+    const where = { isActive: true };
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };
     }
@@ -47,6 +47,16 @@ class CompanyService {
       include: {
         jobs: true
       }
+    });
+  }
+
+  /**
+   * Soft delete a company
+   */
+  static async deleteCompany(id) {
+    return prisma.company.update({
+      where: { id },
+      data: { isActive: false }
     });
   }
 }

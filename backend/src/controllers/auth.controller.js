@@ -32,7 +32,7 @@ class AuthController {
     }
   }
 
-  static async login(req, res, next) {
+  static async login(req, res) {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -71,7 +71,7 @@ class AuthController {
     }
   }
 
-  static async verifyEmail(req, res, next) {
+  static async verifyEmail(req, res) {
     try {
       await AuthService.verifyEmail(req.params.token);
 
@@ -107,7 +107,7 @@ class AuthController {
     }
   }
 
-  static async resetPassword(req, res, next) {
+  static async resetPassword(req, res) {
     try {
       const { token } = req.params;
       const { password } = req.body;
@@ -126,7 +126,7 @@ class AuthController {
     }
   }
 
-  static async refreshToken(req, res, next) {
+  static async refreshToken(req, res) {
     try {
       const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
@@ -180,6 +180,23 @@ class AuthController {
       });
     } catch (error) {
       next(error);
+    }
+  }
+
+  static async changePassword(req, res) {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      await AuthService.changePassword(req.user.id, currentPassword, newPassword);
+      
+      res.json({
+        success: true,
+        message: 'Password changed successfully'
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        error: error.message
+      });
     }
   }
 }

@@ -1,4 +1,3 @@
-const path = require('path');
 const fs = require('fs');
 const supabase = require('../config/supabase');
 
@@ -18,7 +17,7 @@ const uploadToSupabase = async (file, bucket = 'resumes', folder = '') => {
   const filePath = folder ? `${folder}/${file.filename}` : file.filename;
   const fileBuffer = fs.readFileSync(file.path);
 
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from(bucket)
     .upload(filePath, fileBuffer, {
       contentType: file.mimetype,

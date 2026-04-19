@@ -58,6 +58,21 @@ class ApplicationService {
     return application;
   }
 
+  static async getApplicationByStudentAndJob(studentId, jobId) {
+    return await prisma.application.findUnique({
+      where: {
+        studentId_jobId: { studentId, jobId }
+      }
+    });
+  }
+
+  static async updateApplicationOffer(studentId, jobId, offerLetterUrl) {
+    return await prisma.application.update({
+      where: { studentId_jobId: { studentId, jobId } },
+      data: { offerLetterUrl }
+    });
+  }
+
   /**
    * Get applications for a single student profile
    */

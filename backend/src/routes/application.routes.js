@@ -4,6 +4,7 @@ const { authorize } = require('../middlewares/roleCheck');
 const ApplicationController = require('../controllers/application.controller');
 const { updateApplicationStatusValidation } = require('../utils/validators');
 const { validate } = require('../middlewares/validate');
+const upload = require('../middlewares/upload');
 
 const router = express.Router();
 
@@ -11,6 +12,7 @@ router.use(authenticate);
 
 // Student interacting with jobs
 router.post('/:jobId', authorize('STUDENT'), ApplicationController.applyToJob);
+router.post('/:jobId/offer-letter', authorize('STUDENT'), upload.single('offerLetter'), ApplicationController.uploadOfferLetter);
 router.get('/my/all', authorize('STUDENT'), ApplicationController.getMyApplications);
 
 // Admin evaluating applications

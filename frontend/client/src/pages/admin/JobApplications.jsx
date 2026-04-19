@@ -179,6 +179,11 @@ export default function JobApplications() {
                                 <FileText size={14}/>
                               </a>
                             )}
+                            {app.offerLetterUrl && (
+                              <a href={app.offerLetterUrl} target="_blank" rel="noreferrer" title="View Offer Letter" style={{ color:'#059669' }}>
+                                <FileText size={14}/>
+                              </a>
+                            )}
                             <span title={eligible ? 'Eligible' : reasons.join('; ')} style={{ fontSize:'0.65rem', fontWeight:700, background: eligible ? '#F0FDF4' : '#FEF2F2', color: eligible ? '#059669' : '#DC2626', padding:'2px 7px', borderRadius:5, cursor: eligible ? 'default' : 'help', whiteSpace:'nowrap' }}>
                               {eligible ? '✓ Eligible' : '✗ Ineligible'}
                             </span>

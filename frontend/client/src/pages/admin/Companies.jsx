@@ -8,8 +8,9 @@ export default function Companies() {
   const [showModal, setShowModal] = useState(false);
   
   const [formData, setFormData] = useState({
-    name: '', industry: '', website: '', description: '', logoUrl: ''
+    name: '', industry: '', website: '', description: ''
   });
+  const [logoFile, setLogoFile] = useState(null);
 
   const fetchCompanies = async () => {
     try {
@@ -29,9 +30,18 @@ export default function Companies() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/companies', formData);
+      const formPayload = new FormData();
+      Object.keys(formData).forEach(key => formPayload.append(key, formData[key]));
+      if (logoFile) {
+        formPayload.append('logo', logoFile);
+      }
+
+      await api.post('/companies', formPayload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       setShowModal(false);
-      setFormData({ name: '', industry: '', website: '', description: '', logoUrl: '' });
+      setFormData({ name: '', industry: '', website: '', description: '' });
+      setLogoFile(null);
       fetchCompanies();
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to create company');
@@ -68,8 +78,9 @@ export default function Companies() {
                 <input type="url" className="form-input" value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} placeholder="https://" />
               </div>
               <div className="form-group">
-                <label className="form-label">Logo URL</label>
-                <input type="url" className="form-input" value={formData.logoUrl} onChange={e => setFormData({...formData, logoUrl: e.target.value})} />
+                <label className="form-label">Company Logo</label>
+                <input type="file" accept="image/*" className="form-input" onChange={e => setLogoFile(e.target.files?.[0])} />
+                <p className="text-secondary" style={{ fontSize: '0.75rem', marginTop: '4px' }}>Optional. JPG, PNG formats supported.</p>
               </div>
               <div className="form-group">
                 <label className="form-label">Description</label>

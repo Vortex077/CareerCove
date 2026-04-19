@@ -20,14 +20,34 @@ export default function MyApplications() {
   const [filter, setFilter] = useState('ALL');
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await api.get('/applications/my/all?limit=100');
-        setApplications(data.data.applications);
-      } catch (e) { console.error(e); }
-      finally { setLoading(false); }
-    })();
+    fetchApplications();
   }, []);
+
+  const fetchApplications = async () => {
+    try {
+      const { data } = await api.get('/applications/my/all?limit=100');
+      setApplications(data.data.applications);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  };
+
+  const handleOfferLetterUpload = async (jobId, e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('offerLetter', file);
+
+    try {
+      await api.post(`/applications/${jobId}/offer-letter`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      alert('Offer letter uploaded successfully!');
+      fetchApplications();
+    } catch (e) {
+      alert(e.response?.data?.error || 'Failed to upload offer letter');
+    }
+  };
 
   const filters = ['ALL', 'APPLIED', 'UNDER_REVIEW', 'SHORTLISTED', 'INTERVIEW_SCHEDULED', 'SELECTED', 'REJECTED'];
   const visible = filter === 'ALL' ? applications : applications.filter(a => a.status === filter);
@@ -175,9 +195,30 @@ export default function MyApplications() {
                   {/* Resume link */}
                   {app.resumeUrl && (
                     <a href={app.resumeUrl} target="_blank" rel="noreferrer"
-                      style={{ display:'inline-flex', alignItems:'center', gap:4, marginTop:'0.75rem', color:'#0F766E', fontSize:'0.82rem', fontWeight:500 }}>
+                      style={{ display:'inline-flex', alignItems:'center', gap:4, marginTop:'0.75rem', color:'#0F766E', fontSize:'0.82rem', fontWeight:500, marginRight: '1rem' }}>
                       <FileText size={14}/> View Submitted Resume <ExternalLink size={12}/>
                     </a>
+                  )}
+
+                  {/* Offer Letter Action */}
+                  {app.status === 'SELECTED' && (
+                    <div style={{ marginTop:'1rem', padding:'1rem', background:'#F0FDF4', borderRadius:10, border:'1px dashed #86EFAC' }}>
+                      <h4 style={{ margin:'0 0 8px 0', color:'#166534', fontSize:'0.9rem' }}>Congratulations on your offer! 🎉</h4>
+                      <p style={{ margin:'0 0 12px 0', color:'#15803D', fontSize:'0.8rem' }}>Please upload your official offer letter for Admin verification (PDF/DOC, Max 5MB).</p>
+                      
+                      {app.offerLetterUrl ? (
+                        <a href={app.offerLetterUrl} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ display:'inline-flex', alignItems:'center', gap:4, padding:'4px 10px', fontSize:'0.8rem' }}>
+                          <FileText size={14} /> View Uploaded Offer <ExternalLink size={12}/>
+                        </a>
+                      ) : (
+                        <div>
+                          <input type="file" id={`offer-${app.jobId}`} accept=".pdf,.doc,.docx" style={{ display:'none' }} onChange={(e) => handleOfferLetterUpload(app.jobId, e)} />
+                          <label htmlFor={`offer-${app.jobId}`} className="btn btn-primary" style={{ cursor:'pointer', display:'inline-flex', alignItems:'center', gap:6, padding:'6px 12px', fontSize:'0.85rem' }}>
+                            <FileText size={14} /> Upload Offer Letter
+                          </label>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               );

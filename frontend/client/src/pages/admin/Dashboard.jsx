@@ -36,7 +36,7 @@ export default function AdminDashboard() {
           </p>
           <h1 style={{ fontSize:'clamp(1.75rem,4vw,2.5rem)', marginBottom:'0.5rem' }}>Control Panel</h1>
           <p style={{ color:'rgba(255,255,255,0.75)', fontSize:'1rem', maxWidth:520 }}>
-            Real-time overview of your placement operations — students, companies, and drives at a glance.
+            Real-time overview of placement operations — students, companies, and drives at a glance.
           </p>
         </div>
       </div>

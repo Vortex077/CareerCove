@@ -6,6 +6,7 @@ class Helpers {
   }
 
   static sanitizeUser(user) {
+    // eslint-disable-next-line no-unused-vars
     const { passwordHash, verificationToken, resetToken, ...sanitized } = user;
     return sanitized;
   }

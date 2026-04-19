@@ -36,7 +36,7 @@ export default function Login() {
   const stats = [
     { icon: <Users size={20} />,     value: '1,200+', label: 'Students Placed'  },
     { icon: <TrendingUp size={20} />, value: '94%',    label: 'Placement Rate'  },
-    { icon: <BookOpen size={20} />,  value: '150+',   label: 'Partner Companies' },
+    { icon: <BookOpen size={20} />,  value: '50+',   label: 'Partner Companies' },
   ];
 
   return (
@@ -50,7 +50,7 @@ export default function Login() {
         <div className="auth-brand-decor"
           style={{ width: 320, height: 320, background: 'rgba(20,184,166,0.18)', bottom: '-80px', right: '-80px' }} />
 
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 460 }}>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 540 }}>
           {/* Logo */}
           <div className="flex items-center gap-3 mb-10">
             <div style={{
@@ -66,27 +66,27 @@ export default function Login() {
             </span>
           </div>
 
-          <h1 style={{ color: 'white', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '1rem' }}>
+          <h1 style={{ color: 'white', fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '1.25rem', letterSpacing: '-0.02em' }}>
             Launch your<br />career journey.
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.78)', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '2.5rem' }}>
+          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1.15rem', lineHeight: 1.6, marginBottom: '3rem', maxWidth: '90%' }}>
             The unified placement platform trusted by universities. Connect with top companies, track your applications, and land your dream role.
           </p>
 
           {/* Stats row */}
-          <div className="flex gap-4 flex-wrap">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
             {stats.map(s => (
               <div key={s.label} style={{
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.16)',
-                borderRadius: 10,
-                padding: '1rem 1.25rem',
-                backdropFilter: 'blur(8px)',
-                minWidth: 110,
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                borderRadius: 12,
+                padding: '1.25rem 1rem',
+                backdropFilter: 'blur(12px)',
+                display: 'flex', flexDirection: 'column', alignItems: 'flex-start'
               }}>
-                <div style={{ color: 'rgba(255,255,255,0.7)', marginBottom: 6 }}>{s.icon}</div>
-                <div style={{ color: 'white', fontFamily: 'Outfit', fontSize: '1.5rem', fontWeight: 800, lineHeight: 1 }}>{s.value}</div>
-                <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.75rem', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</div>
+                <div style={{ color: '#5EEAD4', marginBottom: 12 }}>{s.icon}</div>
+                <div style={{ color: 'white', fontFamily: 'Outfit', fontSize: '1.6rem', fontWeight: 800, lineHeight: 1 }}>{s.value}</div>
+                <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem', marginTop: 6, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>{s.label}</div>
               </div>
             ))}
           </div>

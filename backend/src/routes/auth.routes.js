@@ -25,6 +25,11 @@ const resetPasswordValidation = [
   body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
 ];
 
+const changePasswordValidation = [
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword').isLength({ min: 8 }).withMessage('New password must be at least 8 characters')
+];
+
 // Routes
 router.post('/register', registerValidation, AuthController.register);
 router.post('/login', loginValidation, AuthController.login);
@@ -33,6 +38,7 @@ router.post('/refresh', AuthController.refreshToken);
 router.get('/verify/:token', AuthController.verifyEmail);
 router.post('/forgot-password', AuthController.forgotPassword);
 router.post('/reset-password/:token', resetPasswordValidation, AuthController.resetPassword);
+router.post('/change-password', authenticate, changePasswordValidation, AuthController.changePassword);
 router.get('/me', authenticate, AuthController.getCurrentUser);
 
 module.exports = router;

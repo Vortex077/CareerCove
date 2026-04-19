@@ -211,6 +211,7 @@ model Job {
   applicationMode       String    @default("external") @map("application_mode")
   
   status                String    @default("draft")
+  isActive              Boolean   @default(true) @map("is_active")
   viewCount             Int       @default(0) @map("view_count")
   applicationCount      Int       @default(0) @map("application_count")
   
@@ -242,6 +243,7 @@ model Application {
   
   coverLetter        String?           @map("cover_letter")
   resumeUrl          String?           @map("resume_url")
+  offerLetterUrl     String?           @map("offer_letter_url")
   
   eligibilityStatus  String            @default("pending") @map("eligibility_status")
   adminRemarks       String?           @map("admin_remarks")

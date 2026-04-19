@@ -1,5 +1,6 @@
 const ApplicationService = require('../services/application.service');
 const Helpers = require('../utils/helpers');
+const { uploadToSupabase } = require('../services/file.service');
 
 class ApplicationController {
 
@@ -22,6 +23,35 @@ class ApplicationController {
       if (error.message.includes('already applied')) {
          return res.status(409).json({ success: false, error: error.message });
       }
+      next(error);
+    }
+  }
+
+  static async uploadOfferLetter(req, res, next) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, error: 'No offer letter uploaded' });
+      }
+
+      const jobId = parseInt(req.params.jobId, 10);
+      const studentId = req.user.id;
+
+      // Ensure the application exists and is SELECTED
+      const application = await ApplicationService.getApplicationByStudentAndJob(studentId, jobId);
+      if (!application) {
+        return res.status(404).json({ success: false, error: 'Application not found' });
+      }
+      if (application.status !== 'SELECTED') {
+        return res.status(400).json({ success: false, error: 'You can only upload an offer letter for selected applications' });
+      }
+
+      // Upload to supabase 'resumes' bucket with offer prefix
+      const offerUrl = await uploadToSupabase(req.file, 'resumes', `offer-${studentId}-${jobId}`);
+      
+      const updatedApp = await ApplicationService.updateApplicationOffer(studentId, jobId, offerUrl);
+      
+      res.json({ success: true, message: 'Offer letter uploaded successfully', data: { application: updatedApp } });
+    } catch (error) {
       next(error);
     }
   }

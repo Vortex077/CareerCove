@@ -10,7 +10,12 @@ export default function Layout() {
   const handleLogout = () => { logout(); navigate('/login'); };
 
   const isStudent = user?.role === 'STUDENT';
-  const isAdmin   = user?.role === 'ADMIN' || user?.role === 'TNP_COORDINATOR' || user?.role === 'HOD';
+
+  const handleLogoClick = () => {
+    if (user?.role === 'STUDENT') navigate('/student/dashboard');
+    else if (user?.role === 'HOD') navigate('/reports');
+    else navigate('/admin/dashboard');
+  };
 
   const navCls = ({ isActive }) =>
     `flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
@@ -29,6 +34,7 @@ export default function Layout() {
   const adminLinks = [
     { to: '/admin/dashboard',    icon: <LayoutDashboard size={16}/>, label: 'Dashboard'    },
     { to: '/admin/companies',    icon: <Building2       size={16}/>, label: 'Companies'    },
+    { to: '/admin/students',     icon: <ClipboardList   size={16}/>, label: 'Students'     },
     { to: '/admin/drives',       icon: <Target          size={16}/>, label: 'Drives'       },
     { to: '/admin/jobs',         icon: <Briefcase       size={16}/>, label: 'Jobs'         },
     { to: '/admin/applications', icon: <ClipboardList   size={16}/>, label: 'Pipeline'     },
@@ -61,7 +67,7 @@ export default function Layout() {
 
           {/* Brand */}
           <button
-            onClick={() => navigate(isStudent ? '/student/dashboard' : '/admin/dashboard')}
+            onClick={handleLogoClick}
             style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0 }}
           >
             <div style={{

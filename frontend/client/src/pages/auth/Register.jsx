@@ -68,7 +68,7 @@ export default function Register() {
         <div className="auth-brand-decor"
           style={{ width: 260, height: 260, background: 'rgba(20,184,166,0.2)',  bottom: '-60px', left: '-60px' }} />
 
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 420 }}>
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 520 }}>
           <div className="flex items-center gap-3 mb-10">
             <div style={{
               width: 44, height: 44, borderRadius: 10,
@@ -80,11 +80,11 @@ export default function Register() {
             <span style={{ color: 'white', fontFamily:'Outfit', fontSize:'1.4rem', fontWeight:700 }}>CareerCove</span>
           </div>
 
-          <h1 style={{ color: 'white', fontSize: 'clamp(1.75rem, 3.5vw, 2.6rem)', fontWeight: 800, lineHeight: 1.15, marginBottom: '1rem' }}>
-            Join your university's{' '}
+          <h1 style={{ color: 'white', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, lineHeight: 1.15, marginBottom: '1.25rem', letterSpacing: '-0.02em' }}>
+            Join your university's<br />
             <span style={{ color: '#5EEAD4' }}>placement hub.</span>
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1rem', lineHeight: 1.7, marginBottom: '2rem' }}>
+          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1.15rem', lineHeight: 1.6, marginBottom: '2.5rem', maxWidth: '90%' }}>
             Create your profile, upload your resume, and let recruiters from 150+ top companies discover you automatically.
           </p>
 
@@ -94,16 +94,16 @@ export default function Register() {
             'Real-time application status tracking',
             'Secure document storage via Supabase',
           ].map(f => (
-            <div key={f} className="flex items-center gap-3" style={{ marginBottom: '0.75rem' }}>
+            <div key={f} className="flex items-center gap-4" style={{ marginBottom: '1.25rem' }}>
               <div style={{
-                width: 22, height: 22, borderRadius: '50%',
-                background: 'rgba(255,255,255,0.2)',
+                width: 28, height: 28, borderRadius: '50%',
+                background: 'rgba(94, 234, 212, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
               }}>
-                <span style={{ color: '#5EEAD4', fontWeight: 700, fontSize: '0.7rem' }}>✓</span>
+                <span style={{ color: '#5EEAD4', fontWeight: 800, fontSize: '0.85rem' }}>✓</span>
               </div>
-              <span style={{ color: 'rgba(255,255,255,0.82)', fontSize: '0.9rem' }}>{f}</span>
+              <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.05rem', fontWeight: 500 }}>{f}</span>
             </div>
           ))}
         </div>

@@ -1,5 +1,4 @@
 const ReportService = require('../services/report.service');
-const { successResponse } = require('../utils/helpers');
 
 class ReportController {
   
@@ -7,7 +6,11 @@ class ReportController {
     try {
       const { batchYear, department } = req.query;
       const data = await ReportService.getPlacementReport(batchYear, department);
-      return successResponse(res, data, 'Placement report generated successfully');
+      return res.json({
+        success: true,
+        message: 'Placement report generated successfully',
+        data
+      });
     } catch (error) {
       next(error);
     }
@@ -16,7 +19,11 @@ class ReportController {
   static async getCompanyReport(req, res, next) {
     try {
       const data = await ReportService.getCompanyReport();
-      return successResponse(res, data, 'Company report generated successfully');
+      return res.json({
+        success: true,
+        message: 'Company report generated successfully',
+        data
+      });
     } catch (error) {
       next(error);
     }

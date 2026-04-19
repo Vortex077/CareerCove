@@ -50,11 +50,14 @@ class JobService {
   }
 
   static async deleteJob(id) {
-    return prisma.job.delete({ where: { id: parseInt(id, 10) } });
+    return prisma.job.update({ 
+      where: { id: parseInt(id, 10) },
+      data: { isActive: false }
+    });
   }
 
   static async getAllJobsAdmin({ skip, limit, search, companyId }) {
-    const where = {};
+    const where = { isActive: true };
     if (companyId) where.companyId = parseInt(companyId, 10);
     if (search) {
       where.OR = [
@@ -91,6 +94,7 @@ class JobService {
   static async getActiveJobs({ skip, limit, search }) {
     const where = {
       status: 'published',
+      isActive: true,
       applicationDeadline: { gt: new Date() }
     };
 

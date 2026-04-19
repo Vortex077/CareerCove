@@ -25,6 +25,7 @@ import ManageJobs from './pages/admin/Jobs';
 import ManageApplications from './pages/admin/Applications';
 import JobApplications from './pages/admin/JobApplications';
 import AdminDrives from './pages/admin/Drives';
+import AdminStudents from './pages/admin/Students';
 
 // Placeholder HOD components for pending specs
 import Reports from './pages/admin/Reports';
@@ -59,6 +60,7 @@ function App() {
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/companies" element={<Companies />} />
+              <Route path="/admin/students" element={<AdminStudents />} />
               <Route path="/admin/jobs" element={<ManageJobs />} />
               <Route path="/admin/drives" element={<AdminDrives />} />
               <Route path="/admin/applications" element={<ManageApplications />} />
