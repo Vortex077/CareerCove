@@ -17,6 +17,7 @@ export default function Register() {
     fullName: '', email: '', password: '', confirmPassword: '',
     role: 'STUDENT', enrollmentNumber: '', department: '',
     batchYear: new Date().getFullYear() + 4,
+    currentYear: 1, currentSemester: 1
   });
   const [error,   setError]   = useState('');
   const [success, setSuccess] = useState('');
@@ -204,6 +205,28 @@ export default function Register() {
                           min="2020" max="2035"
                           value={formData.batchYear} onChange={handleChange} required />
                       </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div className="form-group">
+                      <label className="form-label">Current Academic Year</label>
+                      <select name="currentYear" className="form-select" style={{ height: 46, background: '#fff' }}
+                        value={formData.currentYear} onChange={handleChange} required>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Current Semester</label>
+                      <select name="currentSemester" className="form-select" style={{ height: 46, background: '#fff' }}
+                        value={formData.currentSemester} onChange={handleChange} required>
+                        {[1,2,3,4,5,6,7,8].map(s => (
+                          <option key={s} value={s}>{s === 1 ? '1st' : s === 2 ? '2nd' : s === 3 ? '3rd' : `${s}th`} Semester</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </>

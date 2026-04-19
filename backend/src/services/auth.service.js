@@ -5,7 +5,7 @@ const Helpers = require('../utils/helpers');
 
 class AuthService {
   static async register(userData) {
-    const { email, password, fullName, role, enrollmentNumber, department, batchYear } = userData;
+    const { email, password, fullName, role, enrollmentNumber, department, batchYear, currentYear, currentSemester } = userData;
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -42,8 +42,8 @@ class AuthService {
             enrollmentNumber,
             department,
             batchYear: parseInt(batchYear),
-            currentYear: 1, // Default
-            currentSemester: 1, // Default
+            currentYear: parseInt(currentYear) || 1,
+            currentSemester: parseInt(currentSemester) || 1,
           }
         });
       }
