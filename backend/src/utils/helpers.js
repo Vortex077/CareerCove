@@ -17,8 +17,15 @@ class Helpers {
       backlogs: true,
       department: true,
       year: true,
+      profileComplete: true,
     };
 
+    // 1. Profile Completeness Checks (Mandatory for all applications)
+    if (!student.cgpa || !student.phone || !student.resumeUrl) {
+      checks.profileComplete = false;
+    }
+
+    // 2. Job Specific Criteria
     if (job.minCgpa && student.cgpa < job.minCgpa) {
       checks.cgpa = false;
     }
@@ -46,6 +53,7 @@ class Helpers {
   static getEligibilityMessage(checks) {
     const failed = [];
     
+    if (!checks.profileComplete) failed.push('Profile incomplete (Missing CGPA, Resume, or Phone)');
     if (!checks.cgpa) failed.push('CGPA requirement not met');
     if (!checks.backlogs) failed.push('Too many backlogs');
     if (!checks.department) failed.push('Department not allowed');

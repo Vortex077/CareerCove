@@ -29,11 +29,18 @@ export default function JobList() {
     setApplying(jobId);
     try {
       await api.post(`/applications/${jobId}`);
-      setToast('Application submitted! You can track it on your dashboard.');
+      setToast('Application submitted successfully!');
       setTimeout(() => setToast(''), 4000);
     } catch (err) {
-      setToast(err.response?.data?.error || 'Failed to apply.');
-      setTimeout(() => setToast(''), 4000);
+      const errorMsg = err.response?.data?.error || 'Failed to apply.';
+      setToast(errorMsg);
+      
+      // If profile is incomplete, emphasize that they should go to profile
+      if (errorMsg.toLowerCase().includes('profile incomplete')) {
+        setTimeout(() => navigate('/student/profile'), 2500);
+      }
+      
+      setTimeout(() => setToast(''), 5000);
     } finally {
       setApplying(null);
     }

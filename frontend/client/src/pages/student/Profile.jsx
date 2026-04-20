@@ -140,6 +140,23 @@ export default function StudentProfile() {
         </div>
       </div>
 
+      {/* Mandatory Check Banner */}
+      <div style={{ 
+        backgroundColor: '#FFFBEB', border: '1px solid #FEF3C7', 
+        padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem',
+        display: 'flex', gap: '0.75rem', alignItems: 'center'
+      }}>
+        <div style={{ backgroundColor: '#FDE68A', padding: '8px', borderRadius: '50%', color: '#92400E' }}>
+          <Save size={18} />
+        </div>
+        <div>
+          <p style={{ margin: 0, fontWeight: '700', color: '#92400E', fontSize: '0.9rem' }}>Important: Profile Completion</p>
+          <p style={{ margin: 0, color: '#B45309', fontSize: '0.85rem' }}>
+            You must provide your <strong>CGPA, Resume,</strong> and <strong>Phone Number</strong> before you can apply for any job.
+          </p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1">
         <form onSubmit={handleSubmit} className="card">
           
@@ -152,7 +169,7 @@ export default function StudentProfile() {
           <h3 className="mb-4 text-primary">Academic Information</h3>
           <div className="grid grid-cols-2 mb-6">
             <div className="form-group">
-              <label className="form-label" htmlFor="cgpa">Current CGPA</label>
+              <label className="form-label" htmlFor="cgpa">Current CGPA <span style={{ color: '#E11D48', fontSize: '10px', fontWeight: 'bold' }}>* MANDATORY</span></label>
               <input
                 type="number"
                 step="0.01"
@@ -168,7 +185,7 @@ export default function StudentProfile() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label" htmlFor="activeBacklogs">Active Backlogs</label>
+              <label className="form-label" htmlFor="activeBacklogs">Active Backlogs <span style={{ color: '#E11D48', fontSize: '10px', fontWeight: 'bold' }}>* MANDATORY</span></label>
               <input
                 type="number"
                 min="0"
@@ -185,7 +202,7 @@ export default function StudentProfile() {
           <h3 className="mb-4 text-primary" style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-6)' }}>Links & Contact</h3>
           <div className="grid grid-cols-2 mb-6">
             <div className="form-group">
-              <label className="form-label" htmlFor="phone">Phone Number</label>
+              <label className="form-label" htmlFor="phone">Phone Number <span style={{ color: '#E11D48', fontSize: '10px', fontWeight: 'bold' }}>* MANDATORY</span></label>
               <input
                 type="text"
                 id="phone"
@@ -194,6 +211,7 @@ export default function StudentProfile() {
                 value={profile.phone}
                 onChange={handleChange}
                 placeholder="Enter 10-digit number"
+                required
               />
             </div>
             <div className="form-group">
@@ -247,7 +265,7 @@ export default function StudentProfile() {
             />
           </div>
 
-          <h3 className="mb-4 text-primary" style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-6)' }}>Resume Upload</h3>
+          <h3 className="mb-4 text-primary" style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-6)' }}>Resume Upload <span style={{ color: '#E11D48', fontSize: '10px', fontWeight: 'bold' }}>* MANDATORY</span></h3>
           <div className="form-group mb-6 p-4" style={{ border: '2px dashed var(--color-border)', borderRadius: 'var(--radius-md)', textAlign: 'center', backgroundColor: 'var(--color-bg-tertiary)' }}>
             <Upload size={32} className="text-secondary mx-auto mb-2" />
             <p className="text-sm text-secondary mb-2">Upload your latest PDF or DOCX resume (Max 5MB)</p>
