@@ -18,6 +18,8 @@ class Helpers {
       department: true,
       year: true,
       profileComplete: true,
+      skills: true,
+      missingSkills: [],
     };
 
     // 1. Profile Completeness Checks (Mandatory for all applications)
@@ -25,7 +27,18 @@ class Helpers {
       checks.profileComplete = false;
     }
 
-    // 2. Job Specific Criteria
+    // 2. Skill Matching (Case-Insensitive)
+    if (job.requiredSkills && job.requiredSkills.length > 0) {
+      const studentSkills = (student.skills || []).map(s => s.toLowerCase());
+      const missing = job.requiredSkills.filter(req => !studentSkills.includes(req.toLowerCase()));
+      
+      if (missing.length > 0) {
+        checks.skills = false;
+        checks.missingSkills = missing;
+      }
+    }
+
+    // 3. Job Specific Criteria
     if (job.minCgpa && student.cgpa < job.minCgpa) {
       checks.cgpa = false;
     }
@@ -54,6 +67,7 @@ class Helpers {
     const failed = [];
     
     if (!checks.profileComplete) failed.push('Profile incomplete (Missing CGPA, Resume, or Phone)');
+    if (!checks.skills) failed.push(`Missing required skills: ${checks.missingSkills.join(', ')}`);
     if (!checks.cgpa) failed.push('CGPA requirement not met');
     if (!checks.backlogs) failed.push('Too many backlogs');
     if (!checks.department) failed.push('Department not allowed');

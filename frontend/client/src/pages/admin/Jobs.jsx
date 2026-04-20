@@ -174,6 +174,15 @@ export default function ManageJobs() {
       reasons.push(`${app.student.activeBacklogs} active backlogs > max ${job.maxBacklogs}`);
     if (job.allowedYears?.length > 0 && !job.allowedYears.includes(app.student.currentYear))
       reasons.push(`Batch Year ${app.student.currentYear} not eligible`);
+    
+    if (job.requiredSkills?.length > 0) {
+      const studentSkills = (app.student.skills || []).map(s => s.toLowerCase());
+      const missing = job.requiredSkills.filter(req => !studentSkills.includes(req.toLowerCase()));
+      if (missing.length > 0) {
+        reasons.push(`Missing skills: ${missing.join(', ')}`);
+      }
+    }
+    
     return { eligible: reasons.length === 0, reasons };
   };
 
