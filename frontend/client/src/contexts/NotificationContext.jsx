@@ -17,79 +17,97 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = useCallback(async (silent = false) => {
     if (!user) return;
     try {
       const { data } = await api.get('/notifications');
       setNotifications(data.data.notifications);
       setUnreadCount(data.data.unreadCount);
     } catch (err) {
-      console.error('Failed fetching notifications', err);
+      if (!silent) console.error('Failed fetching notifications', err);
     }
   }, [user]);
 
+  const showPremiumToast = useCallback((notif) => {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed; bottom: 24px; right: 24px; 
+      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); 
+      border-left: 5px solid #0F766E; padding: 18px 24px; border-radius: 16px; 
+      z-index: 10000; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
+      font-family: Outfit, sans-serif; min-width: 340px; max-width: 420px;
+      display: flex; flex-direction: column; gap: 6px;
+      animation: slideInX 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.4s ease;
+    `;
+    toast.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2px;">
+        <span style="font-size: 0.7rem; font-weight: 800; color: #0F766E; text-transform: uppercase; letter-spacing: 0.1em;">Notification</span>
+        <span style="font-size: 0.65rem; color: #94A3B8;">New Alert</span>
+      </div>
+      <strong style="color: #0F172A; font-size: 1.05rem; letter-spacing: -0.01em;">${notif.title}</strong>
+      <p style="color: #475569; font-size: 0.9rem; margin: 0; line-height: 1.5; font-weight: 450;">${notif.message}</p>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(16px)';
+      setTimeout(() => toast.remove(), 400);
+    }, 6500);
+  }, []);
+
   useEffect(() => {
-    if (user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchNotifications();
-      
-      const channel = supabase
-        .channel('custom-insert-channel')
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
-          (payload) => {
-            const raw = payload.new;
-            // Normalize snake_case from Postgres to camelCase for React
-            const newNotif = {
-              id: raw.id,
-              userId: raw.user_id,
-              notificationType: raw.notification_type,
-              title: raw.title,
-              message: raw.message,
-              isRead: raw.is_read,
-              createdAt: raw.created_at
-            };
+    if (!user) return;
 
-            setNotifications(prev => [newNotif, ...prev]);
-            setUnreadCount(prev => prev + 1);
-            
-            // Show Premium Toast
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-              position: fixed; bottom: 24px; right: 24px; 
-              background: white; border-left: 5px solid #0F766E;
-              padding: 16px 20px; border-radius: 12px; z-index: 9999;
-              box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-              font-family: Outfit, sans-serif; min-width: 320px; max-width: 400px;
-              display: flex; flex-direction: column; gap: 4px;
-              animation: slideInX 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-              transition: all 0.4s ease;
-            `;
-            toast.innerHTML = `
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size: 0.75rem; font-weight: 700; color: #0F766E; text-transform: uppercase; letter-spacing: 0.05em;">New Notification</span>
-                <span style="font-size: 0.7rem; color: #94A3B8;">Just now</span>
-              </div>
-              <strong style="color: #0F172A; font-size: 1rem; line-height: 1.4;">${newNotif.title}</strong>
-              <p style="color: #64748B; font-size: 0.875rem; margin: 0; line-height: 1.5;">${newNotif.message}</p>
-            `;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-              toast.style.opacity = '0';
-              toast.style.transform = 'translateY(10px)';
-              setTimeout(() => toast.remove(), 400);
-            }, 6000);
-          }
-        )
-        .subscribe();
+    // 1. Initial Fetch
+    fetchNotifications();
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
-    }
-  }, [user, fetchNotifications]);
+    // 2. Real-time Subscription
+    const channelId = `user-notifs-${user.id}-${Math.floor(Date.now() / 1000)}`;
+    const channel = supabase
+      .channel(channelId)
+      .on(
+        'postgres_changes',
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'notifications', 
+          filter: `user_id=eq.${user.id}` 
+        },
+        (payload) => {
+          const raw = payload.new;
+          const newNotif = {
+            id: raw.id,
+            userId: raw.user_id,
+            notificationType: raw.notification_type,
+            title: raw.title,
+            message: raw.message,
+            isRead: raw.is_read,
+            createdAt: raw.created_at
+          };
+
+          setNotifications(prev => [newNotif, ...prev]);
+          setUnreadCount(prev => prev + 1);
+          showPremiumToast(newNotif);
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Real-time notifications connected');
+        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+          console.warn('Real-time connection lost, falling back to polling');
+        }
+      });
+
+    // 3. Fail-safe Polling (every 45 seconds)
+    const pollInterval = setInterval(() => fetchNotifications(true), 45000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(pollInterval);
+    };
+  }, [user, fetchNotifications, showPremiumToast]);
 
   const markAsRead = async (id) => {
     try {
