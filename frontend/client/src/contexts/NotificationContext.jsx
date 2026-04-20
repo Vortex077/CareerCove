@@ -32,21 +32,22 @@ export const NotificationProvider = ({ children }) => {
     const toast = document.createElement('div');
     toast.style.cssText = `
       position: fixed; bottom: 24px; right: 24px; 
-      background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); 
-      border-left: 5px solid #0F766E; padding: 18px 24px; border-radius: 16px; 
+      background: white; border-left: 5px solid #0d9488;
+      padding: 18px 24px; border-radius: 16px; 
       z-index: 10000; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
-      font-family: Outfit, sans-serif; min-width: 340px; max-width: 420px;
-      display: flex; flex-direction: column; gap: 6px;
-      animation: slideInX 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: 'Outfit', sans-serif; min-width: 320px; max-width: 420px;
+      display: flex; flex-direction: column; gap: 4px;
+      line-height: 1.4;
+      animation: slideInX 0.4s ease-out;
       transition: all 0.4s ease;
     `;
     toast.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2px;">
-        <span style="font-size: 0.7rem; font-weight: 800; color: #0F766E; text-transform: uppercase; letter-spacing: 0.1em;">Notification</span>
-        <span style="font-size: 0.65rem; color: #94A3B8;">New Alert</span>
+        <span style="font-size: 10px; font-weight: 800; color: #0d9488; text-transform: uppercase; letter-spacing: 0.1em;">Notification</span>
+        <span style="font-size: 10px; color: #94a3b8;">Just now</span>
       </div>
-      <strong style="color: #0F172A; font-size: 1.05rem; letter-spacing: -0.01em;">${notif.title}</strong>
-      <p style="color: #475569; font-size: 0.9rem; margin: 0; line-height: 1.5; font-weight: 450;">${notif.message}</p>
+      <strong style="color: #0f172a; font-size: 16px; font-weight: 800; margin-bottom: 2px;">${notif.title}</strong>
+      <p style="color: #475569; font-size: 13px; margin: 0; font-weight: 500;">${notif.message}</p>
     `;
     document.body.appendChild(toast);
     
