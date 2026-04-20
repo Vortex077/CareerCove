@@ -1,6 +1,6 @@
 const prisma = require('../config/prisma');
 const Helpers = require('../utils/helpers');
-const { sendApplicationUpdateEmail } = require('./email.service');
+const EmailService = require('./email.service');
 const NotificationService = require('./notification.service');
 
 class ApplicationService {
@@ -166,7 +166,7 @@ class ApplicationService {
     // Attempt pushing emails seamlessly
     try {
       if (['SHORTLISTED', 'INTERVIEW_SCHEDULED', 'SELECTED', 'REJECTED'].includes(status)) {
-        await sendApplicationUpdateEmail(
+        await EmailService.sendApplicationUpdateEmail(
           app.student.user.email,
           app.student.user.fullName,
           app.job.title,

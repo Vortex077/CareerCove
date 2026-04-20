@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const EmailService = require('./email.service');
 
 class NotificationService {
   /**
@@ -38,7 +39,7 @@ class NotificationService {
     try {
       const eligibleProfiles = await prisma.studentProfile.findMany({
         where,
-        select: { userId: true }
+        include: { user: { select: { email: true, fullName: true } } }
       });
 
       if (eligibleProfiles.length === 0) return;
@@ -55,6 +56,17 @@ class NotificationService {
         data: payload,
         skipDuplicates: true
       });
+
+      // Send emails (async broadcast)
+      eligibleProfiles.forEach(p => {
+        EmailService.sendNewJobNotification(
+          p.user.email,
+          p.user.fullName,
+          job.title,
+          job.company?.name || 'CareerCove'
+        ).catch(err => console.error('Job email blast failed for', p.user.email, err));
+      });
+
     } catch (error) {
       console.error('Failed batch notification bounds', error);
     }
