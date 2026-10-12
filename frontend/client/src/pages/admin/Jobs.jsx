@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Briefcase, Plus, Building, Calendar, Users, Eye, Pencil,
   Trash2, X, ChevronDown, CheckCircle2, XCircle, Clock, ArrowRight
@@ -57,6 +58,16 @@ export default function ManageJobs() {
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Lock background scroll when modal is open (form itself remains scrollable)
+  useEffect(() => {
+    if (modal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [modal]);
 
   // ── Form helpers ────────────────────────────────────────────────────────────
   const openCreate = () => { setForm(EMPTY_FORM); setError(''); setModal('create'); };
@@ -445,8 +456,12 @@ export default function ManageJobs() {
   // ── Main render ────────────────────────────────────────────────────────────
   return (
     <div className="slide-up">
-      {modal === 'create' || modal === 'edit' ? renderJobFormModal() : null}
-      {modal === 'applicants' ? renderApplicantsModal() : null}
+      {modal === 'create' || modal === 'edit'
+        ? createPortal(renderJobFormModal(), document.body)
+        : null}
+      {modal === 'applicants'
+        ? createPortal(renderApplicantsModal(), document.body)
+        : null}
 
       {/* Hero */}
       <div className="page-hero">
