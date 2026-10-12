@@ -187,7 +187,7 @@ export default function ManageJobs() {
   };
 
   // ── Job Form Modal ─────────────────────────────────────────────────────────
-  const JobFormModal = () => (
+  const renderJobFormModal = () => (
     <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.55)', backdropFilter:'blur(4px)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:'1rem' }}>
       <div className="card" style={{ width:'100%', maxWidth:760, maxHeight:'92vh', overflowY:'auto', padding:'2rem' }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1.5rem', paddingBottom:'1rem', borderBottom:'1px solid #E2E8F0' }}>
@@ -345,7 +345,7 @@ export default function ManageJobs() {
   );
 
   // ── Applicants Modal ───────────────────────────────────────────────────────
-  const ApplicantsModal = () => {
+  const renderApplicantsModal = () => {
     const eligible   = applicants.filter(a => getEligibility(a, selJob).eligible);
     const ineligible = applicants.filter(a => !getEligibility(a, selJob).eligible);
 
@@ -445,8 +445,8 @@ export default function ManageJobs() {
   // ── Main render ────────────────────────────────────────────────────────────
   return (
     <div className="slide-up">
-      {modal === 'create' || modal === 'edit' ? <JobFormModal /> : null}
-      {modal === 'applicants' ? <ApplicantsModal /> : null}
+      {modal === 'create' || modal === 'edit' ? renderJobFormModal() : null}
+      {modal === 'applicants' ? renderApplicantsModal() : null}
 
       {/* Hero */}
       <div className="page-hero">
