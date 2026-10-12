@@ -1,0 +1,151 @@
+/* ======= SERVER WAKE-UP OVERLAY ======= */
+
+.wakeup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(148deg, #134E4A 0%, #0F766E 45%, #14B8A6 100%);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.wakeup-card {
+  text-align: center;
+  max-width: 420px;
+  padding: 2.5rem 2rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Logo ring animation */
+.wakeup-logo {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wakeup-logo-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #5EEAD4;
+  animation: spin 1.2s linear infinite;
+}
+
+.wakeup-logo-icon {
+  font-size: 1.75rem;
+  z-index: 1;
+  animation: pulse-icon 2s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.wakeup-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.wakeup-message {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.wakeup-message--error {
+  color: #FCA5A5;
+}
+
+/* Progress bar */
+.wakeup-progress-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.wakeup-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #5EEAD4, #14B8A6);
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wakeup-hint {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.wakeup-hint a {
+  color: #5EEAD4;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.wakeup-hint a:hover {
+  color: #ffffff;
+}
+
+/* Retry button */
+.wakeup-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.75rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #134E4A;
+  background: #5EEAD4;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.wakeup-retry-btn:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.wakeup-retry-btn:active {
+  transform: translateY(0);
+}

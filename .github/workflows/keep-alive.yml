@@ -1,0 +1,23 @@
+name: keep-alive
+
+on:
+  schedule:
+    # Every 12 hours — prevents Supabase from pausing the free project
+    - cron: "0 */12 * * *"
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend health endpoint
+        run: |
+          echo "Pinging backend health endpoint..."
+          response=$(curl -fsS -w "\nHTTP_CODE:%{http_code}" https://careercove-api.onrender.com/api/health 2>&1) || true
+          echo "$response"
+          http_code=$(echo "$response" | grep "HTTP_CODE:" | cut -d: -f2)
+          if [ "$http_code" = "200" ]; then
+            echo "✅ Backend is healthy"
+          else
+            echo "⚠️ Backend returned HTTP $http_code (may still be waking up)"
+          fi

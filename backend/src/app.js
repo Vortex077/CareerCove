@@ -31,15 +31,34 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
-  });
-});
+// Health check — does a real DB read to keep Supabase alive
+const prisma = require('./config/prisma');
+
+const healthHandler = async (req, res) => {
+  try {
+    const userCount = await prisma.user.count();
+    res.json({
+      status: 'ok',
+      message: 'Server is running',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      db: 'connected',
+      users: userCount
+    });
+  } catch (err) {
+    res.status(503).json({
+      status: 'degraded',
+      message: 'Server is running but database is unreachable',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      db: 'disconnected',
+      error: err.message
+    });
+  }
+};
+
+app.get('/health', healthHandler);
+app.get('/api/health', healthHandler);
 
 // API Routes
 app.use('/api/auth', require('./routes/auth.routes'));

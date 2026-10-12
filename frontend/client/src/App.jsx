@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import ServerWakeUp from './components/ServerWakeUp';
 import Layout from './components/Layout';
 
 // Pages
@@ -34,48 +35,50 @@ import './styles/global.css';
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <NotificationProvider>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/verify-email/:token" element={<VerifyEmail />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+    <ServerWakeUp>
+      <Router>
+        <AuthProvider>
+          <NotificationProvider>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/verify-email/:token" element={<VerifyEmail />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-            {/* Authenticated Routes wrapped in Layout */}
-            <Route element={<Layout />}>
-              <Route path="/notifications" element={<NotificationsPage />} />
+              {/* Authenticated Routes wrapped in Layout */}
+              <Route element={<Layout />}>
+                <Route path="/notifications" element={<NotificationsPage />} />
 
-              {/* Student Routes */}
-              <Route path="/student/dashboard" element={<StudentDashboard />} />
-              <Route path="/student/profile" element={<StudentProfile />} />
-              <Route path="/student/jobs" element={<JobList />} />
-              <Route path="/student/jobs/:id" element={<JobDetail />} />
-              <Route path="/student/applications" element={<MyApplications />} />
+                {/* Student Routes */}
+                <Route path="/student/dashboard" element={<StudentDashboard />} />
+                <Route path="/student/profile" element={<StudentProfile />} />
+                <Route path="/student/jobs" element={<JobList />} />
+                <Route path="/student/jobs/:id" element={<JobDetail />} />
+                <Route path="/student/applications" element={<MyApplications />} />
 
-              {/* Admin Routes */}
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/companies" element={<Companies />} />
-              <Route path="/admin/students" element={<AdminStudents />} />
-              <Route path="/admin/jobs" element={<ManageJobs />} />
-              <Route path="/admin/drives" element={<AdminDrives />} />
-              <Route path="/admin/applications" element={<ManageApplications />} />
-              <Route path="/admin/applications/:jobId" element={<JobApplications />} />
+                {/* Admin Routes */}
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/companies" element={<Companies />} />
+                <Route path="/admin/students" element={<AdminStudents />} />
+                <Route path="/admin/jobs" element={<ManageJobs />} />
+                <Route path="/admin/drives" element={<AdminDrives />} />
+                <Route path="/admin/applications" element={<ManageApplications />} />
+                <Route path="/admin/applications/:jobId" element={<JobApplications />} />
 
-              {/* HOD Routes */}
-              <Route path="/reports" element={<Reports />} />
-            </Route>
+                {/* HOD Routes */}
+                <Route path="/reports" element={<Reports />} />
+              </Route>
 
-            {/* 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </NotificationProvider>
-      </AuthProvider>
-    </Router>
+              {/* 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </NotificationProvider>
+        </AuthProvider>
+      </Router>
+    </ServerWakeUp>
   );
 }
 

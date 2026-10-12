@@ -35,7 +35,7 @@ export default function JobList() {
       const errorMsg = err.response?.data?.error || 'Failed to apply.';
       setToast(errorMsg);
       
-      // If profile is incomplete, emphasize that they should go to profile
+
       if (errorMsg.toLowerCase().includes('profile incomplete')) {
         setTimeout(() => navigate('/student/profile'), 2500);
       }
