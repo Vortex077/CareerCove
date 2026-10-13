@@ -10,13 +10,13 @@
 [![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)](https://prisma.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org/)
 
-[**Live Demo**](career-cove.vercel.app) · [**GitHub**](https://github.com/Vortex077/CareerCove)
+[**Live Demo**](https://career-cove.vercel.app/login) · [**GitHub**](https://github.com/Vortex077/CareerCove)
 
 </div>
 
 ---
 
-> **⏳ First load may take ~30 seconds** — the backend is hosted on Render's free tier and sleeps after inactivity. The app shows a friendly "waking up" message while it starts.
+> **⏳ First load may take ~30 seconds** — the backend is hosted on Render's free tier and sleeps after inactivity.
 
 ---
 
@@ -58,7 +58,7 @@ Use these to explore the app without registering:
 
 <!-- ![Login Page](./screenshots/login.png) -->
 
-_Screenshot coming soon — or visit the [Live Demo](https://YOUR-FRONTEND-URL.vercel.app)_
+_Screenshot coming soon — or visit the [Live Demo](https://career-cove.vercel.app/login)_
 
 </details>
 
