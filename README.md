@@ -40,10 +40,10 @@ Designed with a focus on modern user experience, CareerCove provides premium UI/
 
 Use these to explore the app without registering:
 
-| Role                        | Email                         | Password    |
-| --------------------------- | ----------------------------- | ----------- |
-| **Student**                 | `demo.student@university.edu` | `Demo@1234` |
-| **Admin / T&P Coordinator** | `demo.admin@university.edu`   | `Demo@1234` |
+| Role                  | Email                         | Password    |
+| --------------------- | ----------------------------- | ----------- |
+| **Student**           | `demo.student@university.edu` | `Demo@1234` |
+| **T&P Coordinator**   | `demo.tnp@university.edu`     | `Demo@1234` |
 
 > ⚠️ _These are demo accounts with sample data. Please don't modify critical settings._
 

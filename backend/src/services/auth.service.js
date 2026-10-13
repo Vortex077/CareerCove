@@ -140,6 +140,7 @@ class AuthService {
     const normalized = email.toLowerCase().trim();
     return (
       normalized === 'demo.student@university.edu' ||
+      normalized === 'demo.tnp@university.edu' ||
       normalized === 'demo.admin@university.edu' ||
       normalized.startsWith('demo.')
     );

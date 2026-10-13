@@ -48,32 +48,37 @@ async function main() {
     console.log(`  ↳ Already exists: ${studentEmail}`);
   }
 
-  // ─── Demo Admin / T&P Coordinator ──────────────────────────
-  const adminEmail = "demo.admin@university.edu";
-  let admin = await prisma.user.findUnique({ where: { email: adminEmail } });
+  // ─── Demo T&P Coordinator ──────────────────────────────────
+  const tnpEmail = "demo.tnp@university.edu";
+  let tnp = await prisma.user.findUnique({ where: { email: tnpEmail } });
 
-  if (!admin) {
-    admin = await prisma.user.create({
+  if (!tnp) {
+    tnp = await prisma.user.create({
       data: {
-        email: adminEmail,
+        email: tnpEmail,
         passwordHash,
-        fullName: "Demo Admin",
-        role: "ADMIN",
+        fullName: "Demo T&P Coordinator",
+        role: "TNP_COORDINATOR",
         isVerified: true,
         isActive: true,
       },
     });
-    console.log(`  ✓ Created: ${adminEmail} (ADMIN)`);
+    console.log(`  ✓ Created: ${tnpEmail} (TNP_COORDINATOR)`);
   } else {
-    console.log(`  ↳ Already exists: ${adminEmail}`);
+    // Ensure role and password match expected values
+    await prisma.user.update({
+      where: { id: tnp.id },
+      data: { role: "TNP_COORDINATOR", passwordHash }
+    });
+    console.log(`  ↳ Updated: ${tnpEmail} (TNP_COORDINATOR)`);
   }
 
   // ─── Summary ───────────────────────────────────────────────
   console.log("\n" + "═".repeat(50));
   console.log("✅  Demo accounts ready!\n");
-  console.log(`  Student: ${studentEmail}`);
-  console.log(`  Admin:   ${adminEmail}`);
-  console.log(`  Password: ${DEMO_PASSWORD}`);
+  console.log(`  Student:          ${studentEmail}`);
+  console.log(`  T&P Coordinator:  ${tnpEmail}`);
+  console.log(`  Password:         ${DEMO_PASSWORD}`);
   console.log("\n" + "═".repeat(50) + "\n");
 }
 
