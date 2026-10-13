@@ -53,39 +53,31 @@ Use these to explore the app without registering:
 
 <!-- TODO: Add screenshots of key pages. Drop PNGs in a screenshots/ folder and reference them here. -->
 
-<details>
+<details open>
 <summary>🔐 Login Page</summary>
 
-<!-- ![Login Page](./screenshots/login.png) -->
+![Login Page](./screenshots/login.png)
 
-_Screenshot coming soon — or visit the [Live Demo](https://career-cove.vercel.app/login)_
+</details>
+
+<details>
+<summary>👨‍💼 T&P Coordinator Dashboard</summary>
+
+![T&P Coordinator Dashboard](./screenshots/tnp-dashboard.png)
 
 </details>
 
 <details>
 <summary>🧑‍🎓 Student Dashboard</summary>
 
-<!-- ![Student Dashboard](./screenshots/student-dashboard.png) -->
-
-_Screenshot coming soon_
-
-</details>
-
-<details>
-<summary>👨‍💼 Admin Dashboard</summary>
-
-<!-- ![Admin Dashboard](./screenshots/admin-dashboard.png) -->
-
-_Screenshot coming soon_
+![Student Dashboard](./screenshots/student-dashboard.png)
 
 </details>
 
 <details>
 <summary>💼 Job Listings</summary>
 
-<!-- ![Job Listings](./screenshots/jobs.png) -->
-
-_Screenshot coming soon_
+![Job Listings](./screenshots/jobs.png)
 
 </details>
 

@@ -9,7 +9,7 @@ const INITIAL_DELAY_MS = 3000;
 
 /**
  * Pings the backend health endpoint on mount.
- * If the server is asleep (Render free-tier), shows a friendly
+ * If the server is asleep, shows a friendly
  * "waking up" overlay with an animated progress bar and auto-retry
  * so recruiters know the site isn't broken.
  */
@@ -98,7 +98,7 @@ export default function ServerWakeUp({ children }) {
             </div>
 
             <p className="wakeup-hint">
-              Free-tier servers sleep after inactivity. <br />
+              Server is waking up...<br />
               Your data is safe — just a moment!
             </p>
           </>
