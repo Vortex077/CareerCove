@@ -135,7 +135,23 @@ class AuthService {
     return user;
   }
 
+  static isDemoAccount(email) {
+    if (!email) return false;
+    const normalized = email.toLowerCase().trim();
+    return (
+      normalized === 'demo.student@university.edu' ||
+      normalized === 'demo.admin@university.edu' ||
+      normalized.startsWith('demo.')
+    );
+  }
+
   static async requestPasswordReset(email) {
+    if (this.isDemoAccount(email)) {
+      const err = new Error('Password reset is disabled for demo accounts.');
+      err.statusCode = 400;
+      throw err;
+    }
+
     const user = await prisma.user.findUnique({
       where: { email }
     });
@@ -174,6 +190,12 @@ class AuthService {
       throw new Error('Invalid or expired reset token');
     }
 
+    if (this.isDemoAccount(user.email)) {
+      const err = new Error('Password reset is disabled for demo accounts.');
+      err.statusCode = 403;
+      throw err;
+    }
+
     const passwordHash = await bcrypt.hash(newPassword, 12);
 
     await prisma.user.update({
@@ -191,6 +213,12 @@ class AuthService {
   static async changePassword(userId, currentPassword, newPassword) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new Error('User not found');
+
+    if (this.isDemoAccount(user.email)) {
+      const err = new Error('Password changes are disabled for demo accounts.');
+      err.statusCode = 403;
+      throw err;
+    }
 
     const isValid = await bcrypt.compare(currentPassword, user.passwordHash);
     if (!isValid) throw new Error('Current password is incorrect');

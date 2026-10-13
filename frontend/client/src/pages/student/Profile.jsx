@@ -1,8 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Upload, User, Save } from 'lucide-react';
 import api from '../../config/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function StudentProfile() {
+  const { user } = useAuth();
+  const isDemoUser = Boolean(
+    user?.email && (
+      user.email.toLowerCase().startsWith('demo.') ||
+      user.email === 'demo.student@university.edu'
+    )
+  );
   const [profile, setProfile] = useState({
     phone: '',
     cgpa: '',
@@ -300,6 +308,12 @@ export default function StudentProfile() {
           <h3 className="mb-4 text-primary">Change Password</h3>
           <p className="text-sm text-secondary mb-6">If you logged in with a default password, setting a new one is highly recommended.</p>
           
+          {isDemoUser && (
+            <div className="alert alert-warning mb-4" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>⚠️ Password changes are disabled for demo accounts to prevent lockout for other reviewers.</span>
+            </div>
+          )}
+
           {passwordStatus.message && (
             <div className={`alert alert-${passwordStatus.type} mb-4`}>
               {passwordStatus.message}
@@ -309,21 +323,21 @@ export default function StudentProfile() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-2">
             <div className="form-group">
               <label className="form-label" htmlFor="currentPassword">Current Password</label>
-              <input type="password" id="currentPassword" required className="form-input" value={passwords.currentPassword} onChange={e => setPasswords({...passwords, currentPassword: e.target.value})} />
+              <input type="password" id="currentPassword" required className="form-input" value={passwords.currentPassword} onChange={e => setPasswords({...passwords, currentPassword: e.target.value})} disabled={isDemoUser} />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="newPassword">New Password</label>
-              <input type="password" id="newPassword" required className="form-input" value={passwords.newPassword} onChange={e => setPasswords({...passwords, newPassword: e.target.value})} minLength={8} />
+              <input type="password" id="newPassword" required className="form-input" value={passwords.newPassword} onChange={e => setPasswords({...passwords, newPassword: e.target.value})} minLength={8} disabled={isDemoUser} />
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="confirmPassword">Confirm Password</label>
-              <input type="password" id="confirmPassword" required className="form-input" value={passwords.confirmPassword} onChange={e => setPasswords({...passwords, confirmPassword: e.target.value})} minLength={8} />
+              <input type="password" id="confirmPassword" required className="form-input" value={passwords.confirmPassword} onChange={e => setPasswords({...passwords, confirmPassword: e.target.value})} minLength={8} disabled={isDemoUser} />
             </div>
           </div>
 
           <div className="flex justify-end pt-4 mt-6" style={{ borderTop: '1px solid var(--color-border)'}}>
-            <button type="submit" className="btn btn-outline" disabled={changingPwd}>
-              {changingPwd ? 'Changing...' : 'Update Password'}
+            <button type="submit" className="btn btn-outline" disabled={changingPwd || isDemoUser}>
+              {changingPwd ? 'Changing...' : isDemoUser ? 'Disabled for Demo' : 'Update Password'}
             </button>
           </div>
         </form>

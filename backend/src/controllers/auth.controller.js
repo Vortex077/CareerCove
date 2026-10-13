@@ -100,9 +100,15 @@ class AuthController {
 
       res.json({
         success: true,
-        message: 'If email exists, password reset link has been sent'
+        message: result.message || 'If email exists, password reset link has been sent'
       });
     } catch (error) {
+      if (error.statusCode) {
+        return res.status(error.statusCode).json({
+          success: false,
+          error: error.message
+        });
+      }
       next(error);
     }
   }
@@ -119,7 +125,7 @@ class AuthController {
         message: 'Password reset successful'
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(error.statusCode || 400).json({
         success: false,
         error: error.message
       });
@@ -197,7 +203,7 @@ class AuthController {
         message: 'Password changed successfully'
       });
     } catch (error) {
-      res.status(400).json({
+      res.status(error.statusCode || 400).json({
         success: false,
         error: error.message
       });
